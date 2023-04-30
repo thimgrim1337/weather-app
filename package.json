@@ -1,0 +1,26 @@
+{
+  "name": "weather-app",
+  "version": "1.0.0",
+  "description": "",
+  "source": "src/index.html",
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build --dist-dir public",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thimgrim1337/weather-app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thimgrim1337/weather-app/issues"
+  },
+  "homepage": "https://github.com/thimgrim1337/weather-app#readme",
+  "devDependencies": {
+    "@parcel/transformer-sass": "^2.8.3",
+    "date-fns": "^2.29.3",
+    "parcel": "^2.8.3"
+  }
+}

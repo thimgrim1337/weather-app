@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style/main.scss" />
+    <script defer type="module" src="modules/index.js"></script>
+    <title>Weather App</title>
+  </head>
+  <body>
+    <div class="weather-app">
+      <header class="weather-app__topbar topbar">
+        <div class="weather-app__current-weather-info current-weather-info">
+          <img
+            class="weather-app__weather-icon weather-icon weather-icon--big"
+            src="#"
+            alt=""
+          />
+          <div class="weather-app___weather-details weather-details">
+            <div class="weather-details__temp temp temp--big">11</div>
+            <div class="weather-details__measures">
+              <span
+                class="weather-details__measure measure measure-c measure--active"
+                >C</span
+              >
+              <span class="weather-details__measure measure measure-f">F</span>
+            </div>
+
+            <p>Szansa opadów: <span class="weather-details__rain">50%</span></p>
+            <p>
+              Wilgotność: <span class="weather-details__humidity">20%</span>
+            </p>
+            <p>Wiatr: <span class="weather-details__wind"></span></p>
+          </div>
+        </div>
+
+        <div class="weather-app__current-day-info current-day-info">
+          <h2 class="current-day-info__title">Pogoda</h2>
+          <h3 class="current-day-info__city">Płock</h3>
+          <p class="current-day-info__datetime">sobota, 00:00</p>
+          <p class="current-day-info__condition">Bezchmurnie</p>
+        </div>
+      </header>
+      <main class="weather-app__chart"></main>
+      <footer class="weather-app__forecast forecast"></footer>
+    </div>
+  </body>
+</html>

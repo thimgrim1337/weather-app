@@ -1,0 +1,16 @@
+*, :after, :before {
+  box-sizing: border-box;
+}
+
+body {
+  width: 100%;
+  height: 100vh;
+  background-image: url("Cloudy.33c01b62.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin: 0;
+  padding: 0;
+}
+
+/*# sourceMappingURL=index.49c9a8a6.css.map */
