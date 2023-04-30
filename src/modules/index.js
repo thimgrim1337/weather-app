@@ -11,10 +11,16 @@ const getTemp = (tempC) => (isMeasureF === true ? tempC * 2 : tempC);
 
 const renderCurrentWeather = ({ current, location }) => {
   const weatherIconImg = document.querySelector('.weather-icon--big');
-  const currentTemp = document.querySelector('.weather-details__temp');
-  const currentChanceRain = document.querySelector('.weather-details__rain');
-  const currentHumidity = document.querySelector('.weather-details__humidity');
-  const currentWindSpeed = document.querySelector('.weather-details__wind');
+  const currentTemp = document.querySelector('.current-weather-details__temp');
+  const currentChanceRain = document.querySelector(
+    '.current-weather-details__rain'
+  );
+  const currentHumidity = document.querySelector(
+    '.current-weather-details__humidity'
+  );
+  const currentWindSpeed = document.querySelector(
+    '.current-weather-details__wind'
+  );
   const currentCity = document.querySelector('.current-day-info__city');
   const currentDate = document.querySelector('.current-day-info__datetime');
   const currentCondition = document.querySelector(
@@ -64,10 +70,10 @@ const renderDailyWeather = ({ daily }) => {
   });
 };
 
-const measureF = document.querySelector('.measure-f');
-measureF.addEventListener('click', () => {
-  isMeasureF = true;
-});
+// const measureF = document.querySelector('.measure-f');
+// measureF.addEventListener('click', () => {
+//   isMeasureF = true;
+// });
 
 const renderWeather = (async () => {
   const weather = await getWeather();

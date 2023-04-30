@@ -10,21 +10,27 @@
   </head>
   <body>
     <div class="weather-app">
-      <header class="weather-app__topbar topbar">
-        <div class="weather-app__current-weather-info current-weather-info">
-          <img class="weather-app__weather-icon weather-icon weather-icon--big" src="#" alt="">
-          <div class="weather-app___weather-details weather-details">
-            <div class="weather-details__temp temp temp--big">11</div>
-            <div class="weather-details__measures">
-              <span class="weather-details__measure measure measure-c measure--active">C</span>
-              <span class="weather-details__measure measure measure-f">F</span>
+      <header class="weather-app__current-weather-panel">
+        <div class="weather-app__current-weather-details current-weather-details">
+          <img class="current-weather-details__weather-icon weather-icon weather-icon--big" src="#" alt="">
+          <div class="flex">
+            <div class="current-weather-details__temps temps">
+              <div class="current-weather-details__temp temp">11</div>
+              <div class="current-weather-details__measures">
+                <span class="current-weather-details__measure measure measure--active">C</span>
+                <span class="current-weather-details__measure measure">F</span>
+              </div>
             </div>
 
-            <p>Szansa opadów: <span class="weather-details__rain">50%</span></p>
             <p>
-              Wilgotność: <span class="weather-details__humidity">20%</span>
+              Szansa opadów:
+              <span class="current-weather-details__rain">50%</span>
             </p>
-            <p>Wiatr: <span class="weather-details__wind"></span></p>
+            <p>
+              Wilgotność:
+              <span class="current-weather-details__humidity">20%</span>
+            </p>
+            <p>Wiatr: <span class="current-weather-details__wind"></span></p>
           </div>
         </div>
 
