@@ -24,10 +24,13 @@
               <div class="current-weather-details__temp temp">11</div>
               <div class="current-weather-details__measures">
                 <span
+                  data-c
                   class="current-weather-details__measure measure measure--active"
                   >C</span
                 >
-                <span class="current-weather-details__measure measure">F</span>
+                <span class="current-weather-details__measure measure" data-f=""
+                  >F</span
+                >
               </div>
             </div>
 
@@ -50,7 +53,23 @@
           <p class="current-day-info__condition">Bezchmurnie</p>
         </div>
       </header>
-      <main class="weather-app__chart"></main>
+      <main class="weather-app__chart">
+        <div class="chart__buttons">
+          <button
+            data-option="temp"
+            class="chart__button button button--active"
+          >
+            Temperatura
+          </button>
+          <button data-option="chanceOfRain" class="chart__button button">
+            Opady
+          </button>
+          <button data-option="wind" class="chart__button button">Wiatr</button>
+        </div>
+        <div class="chart">
+          <canvas id="myChart"></canvas>
+        </div>
+      </main>
       <footer class="weather-app__forecast forecast"></footer>
     </div>
   </body>

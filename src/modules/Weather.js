@@ -1,64 +1,64 @@
-const getWeather = async () => {
+const getWeather = async (isF) => {
   try {
     const weather = await fetch(
-      'http://api.weatherapi.com/v1/forecast.json?key=d85ae36fb9014f138aa125530231904&q=Plock&days=10&aqi=no&alerts=no'
+      'https://api.weatherapi.com/v1/forecast.json?key=d85ae36fb9014f138aa125530231904&q=Plock&days=10&aqi=no&alerts=no'
     );
 
     const weatherData = await weather.json();
+
     return {
       location: weatherData.location,
-      current: parseCurrentWeather(weatherData),
-      daily: parseDailyWeather(weatherData),
-      hourly: parseHourlyWeather(weatherData),
+      current: parseCurrentWeather(weatherData, isF),
+      daily: parseDailyWeather(weatherData, isF),
+      hourly: parseHourlyWeather(weatherData, isF),
     };
   } catch (error) {
     console.log(error);
   }
 };
 
-const parseCurrentWeather = ({ current, forecast }) => {
-  console.log(current);
-  const {
-    last_updated_epoch: localtime,
-    temp_c: tempC,
-    humidity,
-    wind_kph: windKph,
-  } = current;
+const parseCurrentWeather = ({ current, forecast }, isF) => {
+  const temp = isF ? current.temp_f : current.temp_c;
+  const wind = isF ? `${current.wind_mph} mp/h` : `${current.wind_kph} km/h`;
+  const { last_updated_epoch: localtime, humidity } = current;
   const { icon: weatherIcon, text: weatherText } = current.condition;
   const { daily_chance_of_rain: chanceOfRain } = forecast.forecastday[0].day;
   return {
     localtime,
-    tempC,
+    temp,
     humidity,
-    windKph,
+    wind,
     chanceOfRain,
     weatherIcon,
     weatherText,
   };
 };
 
-const parseDailyWeather = ({ forecast }) => {
+const parseDailyWeather = ({ forecast }, isF) => {
   return forecast.forecastday.map((day) => {
+    const maxTemp = isF ? day.day.maxtemp_f : day.day.maxtemp_c;
+    const minTemp = isF ? day.day.mintemp_f : day.day.mintemp_c;
     return {
       date: day.date,
-      maxTempC: day.day.maxtemp_c,
-      minTempC: day.day.mintemp_c,
+      maxTemp,
+      minTemp,
       weatherIcon: day.day.condition.icon,
     };
   });
 };
 
-const parseHourlyWeather = ({ forecast }) => {
-  console.log(forecast);
+const parseHourlyWeather = ({ forecast }, isF) => {
   return forecast.forecastday.map((day) => {
-    return day.hour
-      .map((hour) => {
-        return {
-          time: hour.time,
-          tempC: hour.temp_c,
-        };
-      })
-      .filter((hour, index) => index % 2 === 0);
+    return day.hour.map((hour) => {
+      const temp = isF ? hour.temp_f : hour.temp_c;
+      const wind = isF ? hour.wind_mph : hour.wind_kph;
+      return {
+        time: hour.time,
+        temp,
+        wind,
+        chanceOfRain: hour.chance_of_rain,
+      };
+    });
   });
 };
 
