@@ -1,7 +1,7 @@
 import format from 'date-fns/format';
 import { is, pl } from 'date-fns/locale';
 import { isToday, parseISO, set } from 'date-fns';
-import getWeather from './Weather';
+import getWeather, { autocomplete, getCity } from './Weather';
 import { drawChart, updateChart } from './Chart';
 
 const city = 'Plock';
@@ -51,7 +51,6 @@ const renderDailyWeather = ({ daily }) => {
 
 const renderHourlyWeather = ({ hourly }, chart, hourlyData, activeDay) => {
   label = 'Temperature by hour';
-
   if (hourlyData === 'chanceOfRain') label = 'Chance of rain by hour';
   if (hourlyData === 'wind') label = 'Wind speed by hour';
 
@@ -145,6 +144,7 @@ const getActiveDay = (days) => {
 const measureF = document.querySelector('[data-f]');
 const measureC = document.querySelector('[data-c]');
 const chartButtons = document.querySelectorAll('[data-option');
+const cityInput = document.querySelector('.search__input');
 
 chartButtons.forEach((button) =>
   button.addEventListener('click', (e) => {
@@ -166,6 +166,24 @@ measureC.addEventListener('click', () => {
   isF = false;
   renderWeather(isF, chart, activeChartOption, activeDay);
 });
+
+cityInput.addEventListener('keydown', (e) => {
+  renderAutocompleteResults(getCity(e.target.value));
+});
+
+const renderAutocompleteResults = async (cityResaults) => {
+  const resaultList = document.querySelector('.search__resault');
+  const citiesResult = await cityResaults;
+
+  resaultList.innerHTML = '';
+  if (citiesResult !== undefined && citiesResult.cities.length !== 0) {
+    citiesResult.cities.forEach((city) => {
+      const li = document.createElement('li');
+      li.innerText = `${city.name}, ${city.country}`;
+      resaultList.appendChild(li);
+    });
+  }
+};
 
 const init = async () => {
   chart = await drawChart();

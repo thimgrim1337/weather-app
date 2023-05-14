@@ -10,6 +10,10 @@
   </head>
   <body>
     <div class="weather-app">
+      <div class="weather-app__search search">
+        <input class="search__input input" type="text" name="" id="" />
+        <ul class="search__resault"></ul>
+      </div>
       <header class="weather-app__current-weather-panel">
         <div
           class="weather-app__current-weather-details current-weather-details"
@@ -35,22 +39,24 @@
             </div>
 
             <p>
-              Szansa opadów:
+              Chance of rain:
               <span class="current-weather-details__rain">50%</span>
             </p>
             <p>
-              Wilgotność:
+              Humidity:
               <span class="current-weather-details__humidity">20%</span>
             </p>
-            <p>Wiatr: <span class="current-weather-details__wind"></span></p>
+            <p>
+              Wind speed: <span class="current-weather-details__wind"></span>
+            </p>
           </div>
         </div>
 
         <div class="weather-app__current-day-info current-day-info">
-          <h2 class="current-day-info__title">Pogoda</h2>
+          <h2 class="current-day-info__title">Weather</h2>
           <h3 class="current-day-info__city">Płock</h3>
-          <p class="current-day-info__datetime">sobota, 00:00</p>
-          <p class="current-day-info__condition">Bezchmurnie</p>
+          <p class="current-day-info__datetime"></p>
+          <p class="current-day-info__condition"></p>
         </div>
       </header>
       <main class="weather-app__chart">
@@ -59,12 +65,12 @@
             data-option="temp"
             class="chart__button button button--active"
           >
-            Temperatura
+            Temp
           </button>
           <button data-option="chanceOfRain" class="chart__button button">
-            Opady
+            Rain
           </button>
-          <button data-option="wind" class="chart__button button">Wiatr</button>
+          <button data-option="wind" class="chart__button button">Wind</button>
         </div>
         <div class="chart">
           <canvas id="myChart"></canvas>

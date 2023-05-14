@@ -17,6 +17,32 @@ const getWeather = async (isF) => {
   }
 };
 
+export const getCity = async (cityInput) => {
+  try {
+    if (cityInput !== '') {
+      const city = await fetch(
+        `http://api.weatherapi.com/v1/search.json?key=d85ae36fb9014f138aa125530231904&q=${cityInput}`
+      );
+      const cityData = await city.json();
+
+      return {
+        cities: parseCity(cityData),
+      };
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const parseCity = (cityData) => {
+  return cityData.map((city) => {
+    return {
+      name: city.name,
+      country: city.country,
+    };
+  });
+};
+
 const parseCurrentWeather = ({ current, forecast }, isF) => {
   const temp = isF ? current.temp_f : current.temp_c;
   const wind = isF ? `${current.wind_mph} mp/h` : `${current.wind_kph} km/h`;
