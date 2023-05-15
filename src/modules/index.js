@@ -1,16 +1,14 @@
 import format from 'date-fns/format';
-import { is, pl } from 'date-fns/locale';
-import { isToday, parseISO, set } from 'date-fns';
-import getWeather, { autocomplete, getCity } from './Weather';
+import { isToday, parseISO } from 'date-fns';
+import getWeather, { getCity } from './Weather';
 import { drawChart, updateChart } from './Chart';
+import { debounced } from './Utils';
 
-const city = 'Plock';
+let activeCity = 'Plock';
 let isF = false;
 let activeChartOption = 'temp';
 let activeDay = 0;
 let chart;
-
-const getDay = (date, pattern) => format(date, pattern, { locale: pl });
 
 const renderCurrentWeather = ({ current, location }) => {
   const weatherIconImg = document.querySelector('.weather-icon--big');
@@ -35,7 +33,7 @@ const renderCurrentWeather = ({ current, location }) => {
   currentHumidity.innerText = `${current.humidity}%`;
   currentWindSpeed.innerText = current.wind;
   currentCity.innerText = location.name;
-  currentDate.innerText = getDay(Date.now(), 'eeee');
+  currentDate.innerText = format(Date.now(), 'eeee');
   currentCondition.innerText = current.weatherText;
 };
 
@@ -93,7 +91,7 @@ const createDay = (dayData) => {
 const updateDay = (dayData) => {
   const days = document.querySelectorAll('.forecast__day');
   dayData.forEach((dayData, index) => {
-    days[index].querySelector('.forecast__title').innerText = getDay(
+    days[index].querySelector('.forecast__title').innerText = format(
       parseISO(dayData.date),
       'eeeeee'
     );
@@ -106,7 +104,7 @@ const updateDay = (dayData) => {
 };
 
 const renderWeather = async (isF, chart, hourlyData, activeDay) => {
-  const weather = await getWeather(isF);
+  const weather = await getWeather(isF, activeCity);
 
   renderCurrentWeather(weather);
   renderDailyWeather(weather);
@@ -167,26 +165,40 @@ measureC.addEventListener('click', () => {
   renderWeather(isF, chart, activeChartOption, activeDay);
 });
 
-cityInput.addEventListener('keydown', (e) => {
-  renderAutocompleteResults(getCity(e.target.value));
-});
+const checkInputValue = (input) => {
+  if (input.length >= 3) return true;
+};
 
-const renderAutocompleteResults = async (cityResaults) => {
-  const resaultList = document.querySelector('.search__resault');
-  const citiesResult = await cityResaults;
+const renderAutocompleteResults = async (input) => {
+  if (checkInputValue(input.target.value)) {
+    console.log('działa');
+    const resultList = document.querySelector('.search__result');
+    const citiesResult = await getCity(input.target.value);
 
-  resaultList.innerHTML = '';
-  if (citiesResult !== undefined && citiesResult.cities.length !== 0) {
-    citiesResult.cities.forEach((city) => {
-      const li = document.createElement('li');
-      li.innerText = `${city.name}, ${city.country}`;
-      resaultList.appendChild(li);
-    });
+    resultList.innerHTML = '';
+    if (citiesResult !== undefined) {
+      citiesResult.cities.forEach((city) => {
+        const li = document.createElement('li');
+        li.classList.add('search__item');
+        li.innerText = `${city.name}, ${city.country}`;
+        li.addEventListener('click', async (e) => {
+          activeCity = city.name;
+          await renderWeather(isF, chart, activeChartOption, activeDay);
+          resultList.innerHTML = '';
+          input.target.value = '';
+        });
+        resultList.appendChild(li);
+      });
+    }
   }
 };
 
+const tHandler = debounced(200, renderAutocompleteResults);
+cityInput.addEventListener('input', tHandler);
+
 const init = async () => {
   chart = await drawChart();
+  cityInput.value = '';
   await renderWeather(isF, chart, activeChartOption, activeDay);
 };
 

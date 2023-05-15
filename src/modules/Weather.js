@@ -1,7 +1,7 @@
-const getWeather = async (isF) => {
+const getWeather = async (isF, city) => {
   try {
     const weather = await fetch(
-      'https://api.weatherapi.com/v1/forecast.json?key=d85ae36fb9014f138aa125530231904&q=Plock&days=10&aqi=no&alerts=no'
+      `https://api.weatherapi.com/v1/forecast.json?key=d85ae36fb9014f138aa125530231904&q=${city}&days=3&aqi=no&alerts=no`
     );
 
     const weatherData = await weather.json();
@@ -19,16 +19,14 @@ const getWeather = async (isF) => {
 
 export const getCity = async (cityInput) => {
   try {
-    if (cityInput !== '') {
-      const city = await fetch(
-        `http://api.weatherapi.com/v1/search.json?key=d85ae36fb9014f138aa125530231904&q=${cityInput}`
-      );
-      const cityData = await city.json();
-
+    const city = await fetch(
+      `http://api.weatherapi.com/v1/search.json?key=d85ae36fb9014f138aa125530231904&q=${cityInput}`
+    );
+    const cityData = await city.json();
+    if (cityData.length !== 0)
       return {
         cities: parseCity(cityData),
       };
-    }
   } catch (error) {
     console.log(error);
   }
