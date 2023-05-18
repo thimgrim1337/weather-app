@@ -33,29 +33,21 @@ const renderCurrentWeather = ({ current, location }) => {
   currentHumidity.innerText = `${current.humidity}%`;
   currentWindSpeed.innerText = current.wind;
   currentCity.innerText = location.name;
-  currentDate.innerText = format(Date.now(), 'eeee');
+  currentDate.innerText = format(Date.now(), 'PPPP');
   currentCondition.innerText = current.weatherText;
 };
 
-const renderDailyWeather = ({ daily }) => {
-  const forecast = document.querySelector('.weather-app__forecast');
-  if (!forecast.hasChildNodes()) {
-    daily.forEach((day) => {
-      forecast.appendChild(createDay(day));
-    });
-  }
-  updateDay(daily);
+const getActiveDay = (days) => {
+  return [...days].findIndex((day) =>
+    day.classList.contains('forecast__day--active')
+  );
 };
 
-const renderHourlyWeather = ({ hourly }, chart, hourlyData, activeDay) => {
-  label = 'Temperature by hour';
-  if (hourlyData === 'chanceOfRain') label = 'Chance of rain by hour';
-  if (hourlyData === 'wind') label = 'Wind speed by hour';
-
-  const time = hourly[activeDay].map((hour) => hour.time);
-  const values = hourly[activeDay].map((hour) => hour[hourlyData]);
-
-  updateChart(chart, { label, time, values });
+const setActiveDay = (e) => {
+  const days = document.querySelectorAll('.forecast__day');
+  days.forEach((day) => day.classList.remove('forecast__day--active'));
+  e.target.closest('div').classList.add('forecast__day--active');
+  activeDay = getActiveDay(days);
 };
 
 const createDay = (dayData) => {
@@ -81,8 +73,11 @@ const createDay = (dayData) => {
   day.append(dayName, img, temps);
 
   day.addEventListener('click', (e) => {
-    setActiveDay(e);
-    renderWeather(isF, chart, activeChartOption, activeDay);
+    if (!e.target.closest('div').classList.contains('forecast__day--active')) {
+      setActiveDay(e);
+      renderWeather(isF, chart, activeChartOption, activeDay);
+    }
+    return;
   });
 
   return day;
@@ -103,6 +98,63 @@ const updateDay = (dayData) => {
   });
 };
 
+const renderDailyWeather = ({ daily }) => {
+  const forecast = document.querySelector('.weather-app__forecast');
+  if (!forecast.hasChildNodes()) {
+    daily.forEach((day) => {
+      forecast.appendChild(createDay(day));
+    });
+  }
+  updateDay(daily);
+};
+
+const renderHourlyWeather = ({ hourly }, chart, hourlyData, activeDay) => {
+  label = 'Temperature by hour';
+  if (hourlyData === 'chanceOfRain') label = 'Chance of rain by hour';
+  if (hourlyData === 'wind') label = 'Wind speed by hour';
+
+  const time = hourly[activeDay].map((hour) => hour.time);
+  const values = hourly[activeDay].map((hour) => hour[hourlyData]);
+
+  updateChart(chart, { label, time, values });
+};
+
+const checkInputValue = (input) => {
+  if (input.length >= 3) return true;
+};
+
+const clearResult = () => {
+  document.querySelector('.search__result').innerHTML = '';
+  document.querySelector('.search__input').value = '';
+};
+
+const createResultItem = ({ name, country }) => {
+  const li = document.createElement('li');
+  li.classList.add('search__item');
+  li.innerText = `${name}, ${country}`;
+
+  li.addEventListener('click', async () => {
+    activeCity = name;
+    await renderWeather(isF, chart, activeChartOption, activeDay);
+    clearResult();
+  });
+
+  return li;
+};
+
+const renderAutocompleteResults = async (input) => {
+  if (checkInputValue(input.target.value)) {
+    const resultList = document.querySelector('.search__result');
+    const citiesResult = await getCity(input.target.value);
+
+    resultList.innerHTML = '';
+    if (citiesResult !== undefined)
+      citiesResult.cities.forEach((city) =>
+        resultList.appendChild(createResultItem(city))
+      );
+  }
+};
+
 const renderWeather = async (isF, chart, hourlyData, activeDay) => {
   const weather = await getWeather(isF, activeCity);
 
@@ -121,24 +173,6 @@ const setActiveChartOption = (option) => {
   activeChartOption = option;
 };
 
-const setActiveDay = (e) => {
-  const days = getRenderedDays();
-  days.forEach((day) => day.classList.remove('forecast__day--active'));
-  e.target.closest('div').classList.add('forecast__day--active');
-  activeDay = getActiveDay(days);
-};
-
-const getRenderedDays = () => {
-  const days = document.querySelectorAll('.forecast__day');
-  return days;
-};
-
-const getActiveDay = (days) => {
-  return [...days].findIndex((day) =>
-    day.classList.contains('forecast__day--active')
-  );
-};
-
 const measureF = document.querySelector('[data-f]');
 const measureC = document.querySelector('[data-c]');
 const chartButtons = document.querySelectorAll('[data-option');
@@ -151,47 +185,24 @@ chartButtons.forEach((button) =>
   })
 );
 
-measureF.addEventListener('click', () => {
-  measureC.classList.remove('measure--active');
-  measureF.classList.add('measure--active');
-  isF = true;
-  renderWeather(isF, chart, activeChartOption, activeDay);
-});
+const mHandler = (e) => {
+  if (e.target.hasAttribute('data-f') && !isF) {
+    measureC.classList.remove('measure--active');
+    measureF.classList.add('measure--active');
+    isF = true;
+    renderWeather(isF, chart, activeChartOption, activeDay);
+  }
 
-measureC.addEventListener('click', () => {
-  measureC.classList.add('measure--active');
-  measureF.classList.remove('measure--active');
-  isF = false;
-  renderWeather(isF, chart, activeChartOption, activeDay);
-});
-
-const checkInputValue = (input) => {
-  if (input.length >= 3) return true;
-};
-
-const renderAutocompleteResults = async (input) => {
-  if (checkInputValue(input.target.value)) {
-    console.log('działa');
-    const resultList = document.querySelector('.search__result');
-    const citiesResult = await getCity(input.target.value);
-
-    resultList.innerHTML = '';
-    if (citiesResult !== undefined) {
-      citiesResult.cities.forEach((city) => {
-        const li = document.createElement('li');
-        li.classList.add('search__item');
-        li.innerText = `${city.name}, ${city.country}`;
-        li.addEventListener('click', async (e) => {
-          activeCity = city.name;
-          await renderWeather(isF, chart, activeChartOption, activeDay);
-          resultList.innerHTML = '';
-          input.target.value = '';
-        });
-        resultList.appendChild(li);
-      });
-    }
+  if (e.target.hasAttribute('data-c') && isF) {
+    measureC.classList.add('measure--active');
+    measureF.classList.remove('measure--active');
+    isF = false;
+    renderWeather(isF, chart, activeChartOption, activeDay);
   }
 };
+
+measureF.addEventListener('click', mHandler);
+measureC.addEventListener('click', mHandler);
 
 const tHandler = debounced(200, renderAutocompleteResults);
 cityInput.addEventListener('input', tHandler);
